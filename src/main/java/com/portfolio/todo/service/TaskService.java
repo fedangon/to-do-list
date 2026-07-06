@@ -1,5 +1,6 @@
 package com.portfolio.todo.service;
 
+import com.portfolio.todo.exception.ResourceNotFoundException;
 import com.portfolio.todo.model.Task;
 import com.portfolio.todo.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ public class TaskService {
 
     public Task findById(Long id) {
         return taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Task not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id));
     }
 
     public Task update(Long id, Task updated) {

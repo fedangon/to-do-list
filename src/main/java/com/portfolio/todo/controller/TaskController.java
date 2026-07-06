@@ -2,6 +2,7 @@ package com.portfolio.todo.controller;
 
 import com.portfolio.todo.model.Task;
 import com.portfolio.todo.service.TaskService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class TaskController {
     private final TaskService taskService;
 
     @PostMapping
-    public ResponseEntity<Task> create(@RequestBody Task task) {
+    public ResponseEntity<Task> create(@Valid @RequestBody Task task) {
         return ResponseEntity.status(HttpStatus.CREATED).body(taskService.create(task));
     }
 
@@ -32,7 +33,7 @@ public class TaskController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Task> update(@PathVariable Long id, @RequestBody Task task) {
+    public ResponseEntity<Task> update(@PathVariable Long id, @Valid @RequestBody Task task) {
         return ResponseEntity.ok(taskService.update(id, task));
     }
 
