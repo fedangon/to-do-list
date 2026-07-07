@@ -1,6 +1,7 @@
 package com.portfolio.todo.controller;
 
-import com.portfolio.todo.model.Task;
+import com.portfolio.todo.dto.TaskRequest;
+import com.portfolio.todo.dto.TaskResponse;
 import com.portfolio.todo.service.TaskService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,23 +19,23 @@ public class TaskController {
     private final TaskService taskService;
 
     @PostMapping
-    public ResponseEntity<Task> create(@Valid @RequestBody Task task) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(taskService.create(task));
+    public ResponseEntity<TaskResponse> create(@Valid @RequestBody TaskRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(taskService.create(request));
     }
 
     @GetMapping
-    public ResponseEntity<List<Task>> findAll() {
+    public ResponseEntity<List<TaskResponse>> findAll() {
         return ResponseEntity.ok(taskService.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Task> findById(@PathVariable Long id) {
+    public ResponseEntity<TaskResponse> findById(@PathVariable Long id) {
         return ResponseEntity.ok(taskService.findById(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Task> update(@PathVariable Long id, @Valid @RequestBody Task task) {
-        return ResponseEntity.ok(taskService.update(id, task));
+    public ResponseEntity<TaskResponse> update(@PathVariable Long id, @Valid @RequestBody TaskRequest request) {
+        return ResponseEntity.ok(taskService.update(id, request));
     }
 
     @DeleteMapping("/{id}")
