@@ -2,6 +2,7 @@ package com.portfolio.todo.controller;
 
 import com.portfolio.todo.dto.TaskRequest;
 import com.portfolio.todo.dto.TaskResponse;
+import com.portfolio.todo.dto.TaskStatsResponse;
 import com.portfolio.todo.model.Priority;
 import com.portfolio.todo.service.TaskService;
 import jakarta.validation.Valid;
@@ -42,6 +43,11 @@ public class TaskController {
 
         Pageable pageable = PageRequest.of(page, size, sort);
         return ResponseEntity.ok(taskService.findAll(completed, priority, categoryId, pageable));
+    }
+
+    @GetMapping("/stats")
+    public ResponseEntity<TaskStatsResponse> getStats() {
+        return ResponseEntity.ok(taskService.getStats());
     }
 
     @GetMapping("/{id}")

@@ -2,6 +2,7 @@ package com.portfolio.todo.service;
 
 import com.portfolio.todo.dto.TaskRequest;
 import com.portfolio.todo.dto.TaskResponse;
+import com.portfolio.todo.dto.TaskStatsResponse;
 import com.portfolio.todo.exception.ResourceNotFoundException;
 import com.portfolio.todo.mapper.TaskMapper;
 import com.portfolio.todo.model.Category;
@@ -16,6 +17,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -55,6 +59,20 @@ public class TaskService {
         taskMapper.updateEntity(request, task);
         task.setCategories(resolveCategories(request));
         return taskMapper.toResponse(taskRepository.save(task));
+    }
+
+    @Transactional(readOnly = true)
+    public TaskStatsResponse getStats() {
+        Map<Priority, Long> byPriority = new LinkedHashMap<>();
+        Arrays.stream(Priority.values())
+                .forEach(p -> byPriority.put(p, taskRepository.countByPriority(p)));
+
+        return TaskStatsResponse.builder()
+                .total(taskRepository.count())
+                .completed(taskRepository.countByCompleted(true))
+                .pending(taskRepository.countByCompleted(false))
+                .byPriority(byPriority)
+                .build();
     }
 
     public void delete(Long id) {
