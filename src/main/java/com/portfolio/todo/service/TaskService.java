@@ -5,13 +5,17 @@ import com.portfolio.todo.dto.TaskResponse;
 import com.portfolio.todo.exception.ResourceNotFoundException;
 import com.portfolio.todo.mapper.TaskMapper;
 import com.portfolio.todo.model.Category;
+import com.portfolio.todo.model.Priority;
 import com.portfolio.todo.model.Task;
 import com.portfolio.todo.repository.TaskRepository;
+import com.portfolio.todo.repository.TaskSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -32,11 +36,13 @@ public class TaskService {
     }
 
     @Transactional(readOnly = true)
-    public List<TaskResponse> findAll(Long categoryId) {
-        List<Task> tasks = categoryId != null
-                ? taskRepository.findByCategoriesId(categoryId)
-                : taskRepository.findAll();
-        return tasks.stream().map(taskMapper::toResponse).toList();
+    public Page<TaskResponse> findAll(Boolean completed, Priority priority, Long categoryId, Pageable pageable) {
+        Specification<Task> spec = Specification
+                .where(TaskSpecification.hasCompleted(completed))
+                .and(TaskSpecification.hasPriority(priority))
+                .and(TaskSpecification.hasCategoryId(categoryId));
+
+        return taskRepository.findAll(spec, pageable).map(taskMapper::toResponse);
     }
 
     @Transactional(readOnly = true)
