@@ -5,6 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Data
 public class TaskRequest {
 
@@ -17,4 +20,6 @@ public class TaskRequest {
     private Priority priority;
 
     private Boolean completed;
+
+    private Set<Long> categoryIds = new HashSet<>();
 }
