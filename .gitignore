@@ -16,3 +16,6 @@ mvnw.cmd
 
 ### OS ###
 .DS_Store
+
+### Logs ###
+logs/
