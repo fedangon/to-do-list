@@ -1,0 +1,43 @@
+services:
+
+  # Banco de dados PostgreSQL
+  db:
+    image: postgres:15-alpine
+    container_name: todo-db
+    environment:
+      POSTGRES_DB: todo_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      # Expoe a porta 5432 para acesso externo (ex: DBeaver, IntelliJ)
+      - "5432:5432"
+    volumes:
+      # Volume nomeado: persiste os dados mesmo apos o container ser removido
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      # Aguarda o PostgreSQL estar pronto antes de subir a aplicacao
+      test: ["CMD-SHELL", "pg_isready -U admin -d todo_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Aplicacao Spring Boot
+  app:
+    build: .
+    container_name: todo-app
+    ports:
+      - "8080:8080"
+    environment:
+      # Sobrescreve o application.properties: usa o nome do servico "db" como host
+      # No Docker, containers se comunicam pelo nome do servico definido no compose
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/todo_db
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: admin123
+    depends_on:
+      db:
+        # So inicia a aplicacao apos o healthcheck do banco passar
+        condition: service_healthy
+
+# Volume nomeado gerenciado pelo Docker
+volumes:
+  postgres_data:
