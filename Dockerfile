@@ -13,8 +13,8 @@ COPY src ./src
 RUN mvn package -DskipTests -B
 
 # Stage 2: Runtime
-# Usa apenas o JRE Alpine (imagem enxuta, sem Maven nem JDK)
-FROM eclipse-temurin:17-jre-alpine
+# eclipse-temurin:17-jre suporta AMD64 e ARM64 (Apple Silicon)
+FROM eclipse-temurin:17-jre
 WORKDIR /app
 
 # Copia apenas o JAR gerado no stage de build
